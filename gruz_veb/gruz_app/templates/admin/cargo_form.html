@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}{% if cargo %}Редактирование{% else %}Создание{% endif %} груза{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h2 class="text-center mb-5">{% if cargo %}Редактирование{% else %}Создание{% endif %} груза</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="form-label">Название груза</label>
+                    <input type="text" name="name" class="form-control form-control-lg rounded-pill border-info" value="{{ cargo.name|default:'' }}" required placeholder="Например: Строительные материалы">
+                </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Вес (кг)</label>
+                        <input type="number" step="0.01" name="weight" class="form-control form-control-lg rounded-pill border-info" value="{{ cargo.weight|default:'' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Объём (м³)</label>
+                        <input type="number" step="0.01" name="volume" class="form-control form-control-lg rounded-pill border-info" value="{{ cargo.volume|default:'' }}" required>
+                    </div>
+                </div>
+                <div class="d-grid gap-2 mt-5">
+                    <button type="submit" class="btn btn-info btn-lg rounded-pill py-3 fw-bold">{% if cargo %}Сохранить{% else %}Добавить{% endif %}</button>
+                </div>
+                <div class="text-center mt-3"><a href="{% url 'admin_cargo_list' %}" class="text-muted">Отмена</a></div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

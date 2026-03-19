@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if type %}Редактирование{% else %}Создание{% endif %} типа транспорта{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h2 class="text-center mb-5">
+                {% if type %}Редактирование типа{% else %}Создание типа транспорта{% endif %}
+            </h2>
+
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label for="id_name" class="form-label">Название типа</label>
+                    <input type="text" class="form-control form-control-lg rounded-pill border-info" 
+                           id="id_name" name="name" value="{{ type.name|default:'' }}" required 
+                           placeholder="Например: Грузовик, Фургон, Прицеп">
+                </div>
+
+                <div class="d-grid gap-2 mt-5">
+                    <button type="submit" class="btn btn-info btn-lg rounded-pill py-3 fw-bold">
+                        {% if type %}Сохранить изменения{% else %}Добавить тип{% endif %}
+                    </button>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="{% url 'admin_type_list' %}" class="text-decoration-none text-muted">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

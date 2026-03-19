@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Ошибка удаления{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Ошибка</h4>
+                </div>
+                <div class="card-body text-center py-5">
+                    <p class="lead">{{ message }}</p>
+                    <a href="{% url 'admin_role_list' %}" class="btn btn-primary rounded-pill mt-3">Вернуться к списку</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Транспорты - Админ панель{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        
+        <!-- Левая колонка: Боковая панель -->
+        <div class="col-md-3 col-lg-2 p-0">
+            {% include 'admin/sidebar.html' %}
+        </div>
+
+        <!-- Правая колонка: Контент -->
+        <div class="col-md-9 col-lg-10 p-4 bg-white">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Транспорты</h2>
+                <a href="{% url 'admin_transport_create' %}" class="btn btn-success rounded-pill px-4">Добавить транспорт</a>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-0">
+                    <table class="table table-hover table-bordered mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" style="width: 50px;">№</th>
+                                <th scope="col">Марка и модель</th>
+                                <th scope="col">Номер</th>
+                                <th scope="col">Тип ТС</th>
+                                <th scope="col" style="width: 200px;">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if transports %}
+                                {% for transport in transports %}
+                                <tr>
+                                    <td>{{ transport.id }}</td>
+                                    <td>{{ transport.brand }} {{ transport.model }}</td>
+                                    <td>{{ transport.transport_number }}</td>
+                                    <td>{{ transport.transport_type.name }}</td>
+                                    <td>
+                                        <!-- ИЗМЕНЕНИЕ: Кнопки в одну строку через d-flex и gap -->
+                                        <div class="d-flex gap-2">
+                                            <a href="{% url 'admin_transport_delete' transport.id %}" class="btn btn-danger btn-sm rounded-pill flex-fill">Удалить</a>
+                                            <a href="{% url 'admin_transport_edit' transport.id %}" class="btn btn-warning btn-sm rounded-pill flex-fill">Редактировать</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">
+                                        Список транспортов пуст. Добавьте первый транспорт.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

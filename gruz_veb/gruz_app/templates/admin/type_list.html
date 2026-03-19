@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Типы транспорта - Админ панель{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <div class="col-md-3 col-lg-2 p-0">
+            {% include 'admin/sidebar.html' %}
+        </div>
+
+        <div class="col-md-9 col-lg-10 p-4 bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Типы транспорта</h2>
+                <a href="{% url 'admin_type_create' %}" class="btn btn-success rounded-pill px-4">Добавить тип</a>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-0">
+                    <table class="table table-hover table-bordered mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" style="width: 50px;">№</th>
+                                <th scope="col">Название</th>
+                                <th scope="col" style="width: 200px;">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if types %}
+                                {% for t in types %}
+                                <tr>
+                                    <td>{{ t.id }}</td>
+                                    <td>{{ t.name }}</td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <a href="{% url 'admin_type_delete' t.id %}" class="btn btn-danger btn-sm rounded-pill flex-fill" 
+                                               onclick="return confirm('Вы уверены? Это удалит тип навсегда.');">Удалить</a>
+                                            <a href="{% url 'admin_type_edit' t.id %}" class="btn btn-warning btn-sm rounded-pill flex-fill">Редактировать</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center py-4 text-muted">Список пуст.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
