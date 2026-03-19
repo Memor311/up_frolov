@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Transport, TransportType, User, Role, Cargo
+from .models import Route, Request, Cargo, User, Transport, Status, Role, TransportType
+from .forms import RouteForm, RequestFormSet
+from django.db import transaction
 
 def index(request):
     return render(request, 'index.html')
@@ -227,3 +229,102 @@ def admin_role_delete(request, pk):
     
     role.delete()
     return redirect('admin_role_list')
+    
+def route_list(request):
+    """Публичный список маршрутов (без боковой панели админки)"""
+    routes = Route.objects.select_related('driver', 'client', 'transport', 'status').order_by('-departure_date')
+    return render(request, 'routes/route_list.html', {'routes': routes})
+
+def route_create(request):
+    if request.method == 'POST':
+        route_form = RouteForm(request.POST)
+        formset = RequestFormSet(request.POST)
+        
+        if route_form.is_valid() and formset.is_valid():
+            with transaction.atomic():
+                # 1. Сохраняем основной маршрут
+                route = route_form.save()
+                
+                # 2. Проходим по формам грузов и сохраняем их вручную
+                for form in formset:
+                    if form.cleaned_data: # Если форма не пустая
+                        # Проверка на удаление (если галочка стоит)
+                        if form.cleaned_data.get('DELETE'):
+                            continue
+                        
+                        # Создаем объект Request
+                        request_obj = form.save(commit=False)
+                        request_obj.route = route # ВРУЧНУЮ привязываем к маршруту
+                        request_obj.save()
+            
+            return redirect('route_detail', pk=route.id)
+    else:
+        route_form = RouteForm()
+        formset = RequestFormSet()
+    
+    return render(request, 'routes/route_form.html', {
+        'route_form': route_form,
+        'formset': formset,
+        'title': 'Новый маршрут'
+    })
+
+def route_detail(request, pk):
+    """Детали маршрута"""
+    route = get_object_or_404(Route.objects.select_related('driver', 'client', 'transport', 'status'), pk=pk)
+    requests = route.requests.select_related('cargo').all()
+    return render(request, 'routes/route_detail.html', {'route': route, 'requests': requests})
+
+def route_edit(request, pk):
+    route = get_object_or_404(Route, pk=pk)
+    
+    if request.method == 'POST':
+        route_form = RouteForm(request.POST, instance=route)
+        formset = RequestFormSet(request.POST)
+        
+        if route_form.is_valid() and formset.is_valid():
+            with transaction.atomic():
+                # 1. Сохраняем изменения маршрута
+                route = route_form.save()
+                
+                # 2. Удаляем старые грузы, которые помечены на удаление или отсутствуют в новой форме
+                # Простой подход: удаляем все текущие грузы этого маршрута и создаем новые из формы
+                # (Это проще и надежнее для старой версии Django, чем синхронизация ID)
+                route.requests.all().delete()
+                
+                # 3. Создаем новые записи грузов
+                for form in formset:
+                    if form.cleaned_data:
+                        if form.cleaned_data.get('DELETE'):
+                            continue
+                        
+                        request_obj = form.save(commit=False)
+                        request_obj.route = route
+                        request_obj.save()
+            
+            return redirect('route_detail', pk=route.id)
+    else:
+        route_form = RouteForm(instance=route)
+        # При редактировании заполняем формсет существующими грузами
+        initial_data = []
+        for req in route.requests.all():
+            initial_data.append({
+                'cargo': req.cargo.id,
+                'quantity': req.quantity,
+            })
+        formset = RequestFormSet(initial=initial_data)
+    
+    return render(request, 'routes/route_form.html', {
+        'route_form': route_form,
+        'formset': formset,
+        'title': 'Редактирование маршрута',
+        'route': route
+    })
+
+
+def route_delete(request, pk):
+    """Удаление маршрута"""
+    route = get_object_or_404(Route, pk=pk)
+    if request.method == 'POST':
+        route.delete()
+        return redirect('route_list')
+    return render(request, 'routes/route_confirm_delete.html', {'route': route})

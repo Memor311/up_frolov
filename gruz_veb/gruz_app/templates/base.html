@@ -11,26 +11,28 @@
 
     <!-- ШАПКА -->
     <nav class="navbar navbar-expand-lg bg-primary text-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand bg-white text-primary fw-bold rounded-pill px-3 py-2" href="/">
-                Лого
+        <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ms-auto">
+        <!-- Ссылка на справочники (ведет в админку) -->
+        <li class="nav-item dropdown">
+            <a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                Справочники
             </a>
-            
-            <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{% url 'admin_transport_list' %}">Справочники</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#">Маршруты</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{% url 'admin_transport_list' %}">Транспорты</a></li>
+                <li><a class="dropdown-item" href="{% url 'admin_type_list' %}">Типы ТС</a></li>
+                <li><a class="dropdown-item" href="{% url 'admin_user_list' %}">Пользователи</a></li>
+                <li><a class="dropdown-item" href="{% url 'admin_role_list' %}">Роли</a></li>
+                <li><a class="dropdown-item" href="{% url 'admin_cargo_list' %}">Грузы</a></li>
+            </ul>
+        </li>
+        
+        <!-- Ссылка на Маршруты (теперь отдельно) -->
+        <li class="nav-item">
+            <a class="nav-link text-white fw-bold" href="{% url 'route_list' %}">Маршруты</a>
+        </li>
+    </ul>
+</div>
     </nav>
 
     <!-- ОСНОВНОЙ КОНТЕНТ -->

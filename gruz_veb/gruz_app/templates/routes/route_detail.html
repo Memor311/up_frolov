@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Маршрут #{{ route.id }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <a href="{% url 'route_list' %}" class="btn btn-outline-secondary rounded-pill">&larr; Назад</a>
+        <div class="float-end">
+            <a href="{% url 'route_edit' route.id %}" class="btn btn-warning rounded-pill">Редактировать</a>
+            <a href="{% url 'route_delete' route.id %}" class="btn btn-danger rounded-pill">Удалить</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h3>Рейс #{{ route.id }}: {{ route.address_start }} &rarr; {{ route.address_end }}</h3>
+            <hr>
+            <div class="row">
+                <div class="col-md-4"><strong>Дата:</strong> {{ route.departure_date|date:"d.m.Y H:i" }}</div>
+                <div class="col-md-4"><strong>Водитель:</strong> {{ route.driver.surname }} {{ route.driver.first_name }}</div>
+                <div class="col-md-4"><strong>Статус:</strong> <span class="badge bg-primary">{{ route.status.name }}</span></div>
+                <div class="col-md-6 mt-2"><strong>Транспорт:</strong> {{ route.transport.brand }} {{ route.transport.model }} ({{ route.transport.transport_number }})</div>
+                <div class="col-md-6 mt-2"><strong>Клиент:</strong> {{ route.client.surname }} {{ route.client.first_name }}</div>
+            </div>
+        </div>
+    </div>
+
+    <h4>Состав груза</h4>
+    <table class="table table-bordered">
+        <thead class="table-light"><tr><th>Груз</th><th>Кол-во</th><th>Вес (кг)</th></tr></thead>
+        <tbody>
+            {% for req in requests %}
+            <tr>
+                <td>{{ req.cargo.name }}</td>
+                <td>{{ req.quantity }}</td>
+                <td>{{ req.cargo.weight|floatformat:1 }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3">Нет грузов</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

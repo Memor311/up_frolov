@@ -35,4 +35,10 @@ urlpatterns = [
     path('admin-panel/cargos/create/', admin_cargo_create, name='admin_cargo_create'),
     path('admin-panel/cargos/<int:pk>/edit/', admin_cargo_edit, name='admin_cargo_edit'),
     path('admin-panel/cargos/<int:pk>/delete/', admin_cargo_delete, name='admin_cargo_delete'),
+
+    path('routes/', route_list, name='route_list'),
+    path('routes/create/', route_create, name='route_create'),
+    path('routes/<int:pk>/', route_detail, name='route_detail'),
+    path('routes/<int:pk>/edit/', route_edit, name='route_edit'),
+    path('routes/<int:pk>/delete/', route_delete, name='route_delete'),
 ]

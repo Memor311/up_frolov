@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 text-center">{{ title }}</h2>
+    
+    <form method="post" novalidate>
+        {% csrf_token %}
+        
+        <!-- Блок данных маршрута -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">Информация о рейсе</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Адрес начала</label>
+                        {{ route_form.address_start }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Адрес конца</label>
+                        {{ route_form.address_end }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Дата отправления</label>
+                        {{ route_form.departure_date }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Водитель</label>
+                        {{ route_form.driver }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Клиент</label>
+                        {{ route_form.client }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Транспорт</label>
+                        {{ route_form.transport }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Статус</label>
+                        {{ route_form.status }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Блок грузов -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-info text-dark">Грузы</div>
+            <div class="card-body">
+                <!-- Выводим скрытые поля управления формсетом -->
+                {{ formset.management_form }}
+                
+                <div id="formset-container">
+                    {% for form in formset %}
+                    <div class="row g-3 mb-3 align-items-end border-bottom pb-3 form-row">
+                        <div class="col-md-8">
+                            <label class="form-label small text-muted">Груз</label>
+                            {{ form.cargo }}
+                            {{ form.cargo.errors }}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted">Количество</label>
+                            {{ form.quantity }}
+                            {{ form.quantity.errors }}
+                        </div>
+                        <div class="col-md-1 d-flex align-items-center mb-2">
+                            {% if form.instance.pk %}
+                                <!-- Чекбокс удаления показываем только если у объекта есть ID (редактирование) -->
+                                <div class="form-check">
+                                    {{ form.DELETE }}
+                                    <label class="form-check-label text-danger small ms-1" for="{{ form.DELETE.id_for_label }}">Удалить</label>
+                                </div>
+                            {% else %}
+                                <!-- Для новых строк скрываем чекбокс, но оставляем поле в DOM -->
+                                {{ form.DELETE }} 
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <small class="text-muted">* Заполните строки для добавления грузов. Пустые строки будут проигнорированы.</small>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5">Сохранить</button>
+            <a href="{% url 'route_list' %}" class="btn btn-secondary btn-lg rounded-pill px-4 ms-2">Отмена</a>
+        </div>
+    </form>
+</div>
+
+<!-- Скрипт для динамического добавления строк (опционально, базовая версия работает и без JS) -->
+<script>
+    // Если нужно добавлять строки dynamically, здесь потребуется логика клонирования
+    // Но с extra=3 в forms.py обычно достаточно места для старта.
+</script>
+{% endblock %}

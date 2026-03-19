@@ -7,6 +7,9 @@ class Role(models.Model):
 class Status(models.Model):
     name = models.CharField(max_length=50, unique=True, verbose_name="Название")
 
+    def __str__(self):
+        return self.name
+
 class TransportType(models.Model):
     name = models.CharField(max_length=50, unique=True, verbose_name="Название")
 
@@ -24,10 +27,18 @@ class User(models.Model):
     )
     created_at = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
 
+    def __str__(self):
+        if self.patronymic:
+            return f"{self.surname} {self.first_name} {self.patronymic}"
+        return f"{self.surname} {self.first_name}"
+    
 class Cargo(models.Model):
     name = models.CharField(max_length=200, verbose_name="Название")
     weight = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Вес")
     volume = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Объём")
+
+    def __str__(self):
+        return self.name
 
 class Transport(models.Model):
     brand = models.CharField(max_length=100, verbose_name="Марка")
@@ -40,6 +51,9 @@ class Transport(models.Model):
     )
     transport_number = models.CharField(max_length=20, unique=True, verbose_name="Номер транспорта")
     capacity = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Вместимость")
+
+    def __str__(self):
+        return f"{self.brand} {self.model} ({self.transport_number})"
 
 class Route(models.Model):
     address_start = models.TextField(verbose_name="Адрес начала")
